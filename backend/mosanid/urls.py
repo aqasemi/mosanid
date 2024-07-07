@@ -16,11 +16,10 @@ Including another URLconf
 """
 
 from django.views.generic.base import RedirectView
-from django.conf.urls.static import static
 from django.views.static import serve
 from django.conf import settings
 from django.urls import re_path, path
-from api.views import login, launch, get_jwks, test
+from api.views import login, launch, get_jwks
 
 
 favicon_view = RedirectView.as_view(url='/static/favicon.ico', permanent=True)
@@ -31,6 +30,5 @@ urlpatterns = [
     path('api/jwks', get_jwks, name='mosanid-jwks'),
     re_path(r'^favicon\.ico$', favicon_view),
     re_path(r'^assets/(?P<path>.*)$', serve, {'document_root': settings.STATICFILES_DIRS[1]}),
-    path('api/hi', test, name='hi')
 ]
 
