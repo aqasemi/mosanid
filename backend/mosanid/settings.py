@@ -15,6 +15,7 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = BASE_DIR.parent / 'frontend'
 
 
 # Quick-start development settings - unsuitable for production
@@ -38,8 +39,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'rest_framework',
-    'corsheaders',
+    "rest_framework",
+    "corsheaders",
+    "auth",
     "api"
 ]
 
@@ -61,7 +63,7 @@ ROOT_URLCONF = "mosanid.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [FRONTEND_DIR / 'build'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -75,14 +77,15 @@ TEMPLATES = [
 ]
 
 
-STATIC_URL = '/static/' # if your folder name is different than change accodingly 
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-    os.path.join(BASE_DIR, 'assets' ),
+    FRONTEND_DIR / 'build' / 'static',
+    FRONTEND_DIR / 'build' / 'assets',
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-MEDIA_ROOT =  os.path.join(BASE_DIR, 'assets') # if you don't have media folder than remove it
-MEDIA_URL = '/assets/' # if you don't have media folder than remove it
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+MEDIA_ROOT =  os.path.join(BASE_DIR, 'assets')
+MEDIA_URL = '/assets/'
 
 WSGI_APPLICATION = "mosanid.wsgi.application"
 
