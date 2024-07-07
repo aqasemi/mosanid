@@ -12,6 +12,25 @@ function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
 
+  // send post request to backend
+  (async () => {
+    try {
+      const resp = await fetch("/api/hi", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "hi": window.location.pathname
+        }
+      });
+      console.log(resp.json());
+    }
+    catch (err) {
+      console.error(err);
+    }
+  })();
+
+
+
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
