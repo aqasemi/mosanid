@@ -15,11 +15,22 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.urls import re_path
+from django.views.generic.base import RedirectView
+from django.conf.urls.static import static
+from django.views.static import serve
+from django.conf import settings
+from django.urls import re_path, path
+from api.views import login, launch, get_jwks, test
 
 
-# urlpatterns = [
-#     re_path(r'^login$', login, name='game-login'),
-#     re_path(r'^launch$', launch, name='game-launch'),
-#     re_path(r'^jwks$', get_jwks, name='game-jwks'),
-# ]
+favicon_view = RedirectView.as_view(url='/static/favicon.ico', permanent=True)
+
+urlpatterns = [
+    path('api/login', login, name='mosanid-login'),
+    path('api/launch', launch, name='mosanid-launch'),
+    path('api/jwks', get_jwks, name='mosanid-jwks'),
+    re_path(r'^favicon\.ico$', favicon_view),
+    re_path(r'^assets/(?P<path>.*)$', serve, {'document_root': settings.STATICFILES_DIRS[1]}),
+    path('api/hi', test, name='hi')
+]
+
