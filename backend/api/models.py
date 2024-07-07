@@ -3,22 +3,21 @@ from django.db import models
 # Create your models here.
 
 
-class Univ(models.Model):
-    uName = models.CharField(max_length=50)
-    adminAcUsername = models.CharField(max_length=200)
-    adminAcApiKey = models.CharField(max_length=200)
+class University(models.Model):
+    username = models.CharField()
+    admin_username = models.CharField()
+    admin_apikey = models.CharField()
 
 class Course(models.Model):
-    userFirstName = models.CharField(max_length=40)
-    username = models.CharField(max_length=40)
-    isStudent = models.BooleanField()
-    univ = models.ForeignKey(Univ, on_delete=models.CASCADE)
-    learningMat = models.FileField(upload_to=None, max_length=254)
+    course_id = models.CharField()
+    name = models.CharField()
+    university = models.ForeignKey(University, on_delete=models.CASCADE)
+    learning_materials = models.FileField(upload_to=None)
 
-class user(models.Model):
-    userFirstName = models.CharField(max_length=40)
-    username = models.CharField(max_length=40)
-    isStudent = models.BooleanField()
-    univ = models.ForeignKey(Univ, on_delete=models.CASCADE)
-    Courses = models.ManyToManyField(Course)
+class User(models.Model):
+    first_name = models.CharField()
+    username = models.CharField()
+    is_student = models.BooleanField()
+    university = models.ForeignKey(University, on_delete=models.CASCADE)
+    courses = models.ManyToManyField(Course, related_name='users')
 
