@@ -16,9 +16,9 @@ import {
 import { styled } from "@mui/material/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
-import { chapters, sessions } from "../../data/mockData";
 import { tokens } from "../../theme";
 import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
+import { useLoaderData } from "react-router-dom";
 
 const CustomCard = styled(Card)(({ theme }) => ({
   borderRadius: "16px",
@@ -67,6 +67,8 @@ const SessionCard = ({ session }) => {
 const CourseSectionOne = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const data = useLoaderData();
+  console.log(data)
   return (
     <Box>
       <Box display="flex" alignItems="center" mb={2}>
@@ -85,7 +87,7 @@ const CourseSectionOne = () => {
         </Typography>
       </Box>
 
-      {chapters.map((chapter, index) => (
+      {data.chapters.map((chapter, index) => (
         <Accordion
           key={index}
           sx={{
@@ -121,7 +123,7 @@ const CourseSectionOne = () => {
             </Typography>
             <Box sx={{ mb: 2 }}>
               <Grid container spacing={2}>
-                {sessions.map((session, index) => (
+                {data.sessions.map((session, index) => (
                   <Grid item xs={12} sm={6} md={3} key={index}>
                     <SessionCard session={session} />
                   </Grid>

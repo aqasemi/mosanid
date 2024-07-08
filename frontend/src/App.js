@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from "react-router-dom";
 import Topbar from "./scenes/global/Topbar";
 import Sidebar from "./scenes/global/Sidebar";
 import Dashboard from "./scenes/dashboard";
@@ -7,45 +7,46 @@ import FAQ from "./scenes/faq";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import COURSES from "./scenes/courses";
+import { chapters, sessions } from "./data/mockData";
+
 
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
+  const ins = "Hii";
 
-  // send post request to backend
-  (async () => {
-    try {
-      const resp = await fetch("/api/hi", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "hi": window.location.pathname
-        }
-      });
-      console.log(resp.json());
-    }
-    catch (err) {
-      console.error(err);
-    }
-  })();
+  const AppLayout = () => {
+    return (
+      <div className="app">
+        <Sidebar instructor_name={ins} />
+        <main className="content">
+          <Topbar setIsSidebar={setIsSidebar} />
+        </main>
+      </div>
+    );
+  } 
 
-
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route path='/' element={<AppLayout/>}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/home" element={<Dashboard />} />
+          <Route path="/test" element={<Dashboard />} /> 
+          <Route path="/auth/launch" element={<Dashboard />} />
+          <Route path="/api/launch" element={<Dashboard />} />
+          <Route path="/courses" element={<COURSES />} 
+            loader={() => <COURSES chapters={chapters} sessions={sessions} />}  
+          />
+          <Route path="/faq" element={<FAQ />} />
+      </Route>
+    )
+  )
 
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <div className="app">
-          <Sidebar isSidebar={isSidebar} />
-          <main className="content">
-            <Topbar setIsSidebar={setIsSidebar} />
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/courses" element={<COURSES />} />
-            </Routes>
-          </main>
-        </div>
+        <RouterProvider router={router}/>
       </ThemeProvider>
     </ColorModeContext.Provider>
   );
