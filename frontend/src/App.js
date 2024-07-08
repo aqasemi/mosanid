@@ -28,17 +28,20 @@ function App() {
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path='/' element={<AppLayout/>}>
+      <Routes path='/' element={<AppLayout/>}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/home" element={<Dashboard />} />
           <Route path="/test" element={<Dashboard />} /> 
           <Route path="/auth/launch" element={<Dashboard />} />
           <Route path="/api/launch" element={<Dashboard />} />
           <Route path="/courses" element={<COURSES />} 
-            loader={() => <COURSES chapters={chapters} sessions={sessions} />}  
+            loader={() => {
+              // 
+              return {sessions: sessions, chapters: chapters}
+            }}  
           />
           <Route path="/faq" element={<FAQ />} />
-      </Route>
+      </Routes>
     )
   )
 
