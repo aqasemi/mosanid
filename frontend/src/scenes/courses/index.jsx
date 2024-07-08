@@ -1,4 +1,4 @@
-import React from "react";
+import {React, useState, useEffect} from "react";
 import {
   Box,
   Typography,
@@ -17,8 +17,9 @@ import { styled } from "@mui/material/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
 import { tokens } from "../../theme";
+import axios from "axios";
 import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
-import { useLoaderData } from "react-router-dom";
+
 
 const CustomCard = styled(Card)(({ theme }) => ({
   borderRadius: "16px",
@@ -67,8 +68,17 @@ const SessionCard = ({ session }) => {
 const CourseSectionOne = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const data = useLoaderData();
-  console.log(data)
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const url = window.location.origin;
+    axios.get(url+'/rapi')
+      .then(response => setData(response.data))
+      .catch(error => console.error('Error fetching users:', error));
+      console.log('hiiiiiiiiiii')
+      console.log(data)
+  }, []);
+
   return (
     <Box>
       <Box display="flex" alignItems="center" mb={2}>
@@ -86,87 +96,96 @@ const CourseSectionOne = () => {
           CPCS-203 Programming (II)
         </Typography>
       </Box>
-
-      {data.chapters.map((chapter, index) => (
-        <Accordion
-          key={index}
-          sx={{
-            mb: 2,
-            backgroundColor: colors.primary[400],
-            color: "white",
-            border: "2px solid #423BA0",
-            borderRadius: "16px",
-            overflow: "hidden",
-            mb: 4,
-          }}
-        >
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
+  
+      {data.chapters && data.chapters.length > 0 ? (
+        data.chapters.map((chapter, index) => (
+          <Accordion
+            key={index}
+            sx={{
+              mb: 2,
+              backgroundColor: colors.primary[400],
+              color: "white",
+              border: "2px solid #423BA0",
+              borderRadius: "16px",
+              overflow: "hidden",
+              mb: 4,
+            }}
           >
-            <Typography variant="h6">
-              <Typography
-                component="span"
-                variant="h6"
-                sx={{ fontWeight: "bold" }}
-              >
-                {chapter.title.split(":")[0]}:
-              </Typography>{" "}
-              {chapter.title.split(":")[1]}
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography
-              variant="subtitle1"
-              sx={{ color: "white", mb: 2, fontWeight: "bold" }}
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
             >
-              Practice Sessions
-            </Typography>
-            <Box sx={{ mb: 2 }}>
-              <Grid container spacing={2}>
-                {data.sessions.map((session, index) => (
-                  <Grid item xs={12} sm={6} md={3} key={index}>
-                    <SessionCard session={session} />
-                  </Grid>
-                ))}
-                <Grid item xs={12} sm={6} md={3}>
-                  <Box
-                    sx={{
-                      border: "2px solid #423BA0",
-                      borderRadius: "16px",
-                      overflow: "hidden",
-                      mb: 4,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      height: "185px",
-                    }}
-                  >
-                    <Button
-                      variant="outlined"
-                      startIcon={<AddIcon />}
+              <Typography variant="h6">
+                <Typography
+                  component="span"
+                  variant="h6"
+                  sx={{ fontWeight: "bold" }}
+                >
+                  {chapter.title.split(":")[0]}:
+                </Typography>{" "}
+                {chapter.title.split(":")[1]}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography
+                variant="subtitle1"
+                sx={{ color: "white", mb: 2, fontWeight: "bold" }}
+              >
+                Practice Sessions
+              </Typography>
+              <Box sx={{ mb: 2 }}>
+                <Grid container spacing={2}>
+                  {data.sessions && data.sessions.length > 0 ? (
+                    data.sessions.map((session, index) => (
+                      <Grid item xs={12} sm={6} md={3} key={index}>
+                        <SessionCard session={session} />
+                      </Grid>
+                    ))
+                  ) : (
+                    <Typography>No sessions available</Typography>
+                  )}
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Box
                       sx={{
-                        width: "100%",
-                        height: "100%",
-                        borderStyle: "dashed",
-                        borderRadius: "8px",
-                        color: "white",
-                        backgroundColor: "#423BA0",
-                        "&:hover": {
-                          backgroundColor: "#2C287E",
-                        },
+                        border: "2px solid #423BA0",
+                        borderRadius: "16px",
+                        overflow: "hidden",
+                        mb: 4,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        height: "185px",
                       }}
                     >
-                      Start new
-                    </Button>
-                  </Box>
+                      <Button
+                        variant="outlined"
+                        startIcon={<AddIcon />}
+                        sx={{
+                          width: "100%",
+                          height: "100%",
+                          borderStyle: "dashed",
+                          borderRadius: "8px",
+                          color: "white",
+                          backgroundColor: "#423BA0",
+                          "&:hover": {
+                            backgroundColor: "#2C287E",
+                          },
+                        }}
+                      >
+                        Start new
+                      </Button>
+                    </Box>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </Box>
-          </AccordionDetails>
-        </Accordion>
-      ))}
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+        ))
+      ) : (
+        <Typography>No chapters available</Typography>
+      )}
     </Box>
   );
+  
 };
 
 const OngoingCompetitions = () => {
