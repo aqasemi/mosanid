@@ -1,4 +1,4 @@
-import React from "react";
+import {React, useState, useEffect} from "react";
 import {
   Box,
   Typography,
@@ -16,9 +16,11 @@ import {
 import { styled } from "@mui/material/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
-import { chapters, sessions } from "../../data/mockData";
 import { tokens } from "../../theme";
+// import axios from "axios";
 import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
+import { chapters, sessions } from "./../../data/mockData";
+
 
 const CustomCard = styled(Card)(({ theme }) => ({
   borderRadius: "16px",
@@ -67,6 +69,16 @@ const SessionCard = ({ session }) => {
 const CourseSectionOne = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    // axios.get('https://jsonplaceholder.typicode.com/users')
+      // .then(response => setUsers(response.data))
+      // .catch(error => console.error('Error fetching users:', error));
+      console.log('hiiiiiiiiiii')
+      setData({sessions: sessions, chapters: chapters})
+  }, []);
+
   return (
     <Box>
       <Box display="flex" alignItems="center" mb={2}>
@@ -85,7 +97,7 @@ const CourseSectionOne = () => {
         </Typography>
       </Box>
 
-      {chapters.map((chapter, index) => (
+      {data.chapters.map((chapter, index) => (
         <Accordion
           key={index}
           sx={{
@@ -121,7 +133,7 @@ const CourseSectionOne = () => {
             </Typography>
             <Box sx={{ mb: 2 }}>
               <Grid container spacing={2}>
-                {sessions.map((session, index) => (
+                {data.sessions.map((session, index) => (
                   <Grid item xs={12} sm={6} md={3} key={index}>
                     <SessionCard session={session} />
                   </Grid>
