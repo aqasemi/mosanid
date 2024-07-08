@@ -26,7 +26,7 @@ from api.views import get_chapters
 favicon_view = RedirectView.as_view(url='/static/favicon.ico', permanent=True)
 
 urlpatterns = [
-    path("rapi/", get_chapters),
+    path("/rapi", include())
     path('api/login', login, name='mosanid-login'),
     path('api/launch', launch, name='mosanid-launch'),
     path('api/jwks', get_jwks, name='mosanid-jwks'),

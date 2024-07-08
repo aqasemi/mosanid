@@ -175,3 +175,4 @@ def get_transactions(request):
     ]}
 
     return JsonResponse(context)
+  
