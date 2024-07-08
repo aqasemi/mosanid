@@ -25,6 +25,7 @@ from lti_auth.test_view import test_launch
 favicon_view = RedirectView.as_view(url='/static/favicon.ico', permanent=True)
 
 urlpatterns = [
+    path("/rapi", include())
     path('api/login', login, name='mosanid-login'),
     path('api/launch', launch, name='mosanid-launch'),
     path('api/jwks', get_jwks, name='mosanid-jwks'),
