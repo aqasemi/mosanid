@@ -21,11 +21,12 @@ from django.conf import settings
 from django.urls import re_path, path
 from lti_auth.views import login, launch, get_jwks
 from lti_auth.test_view import test_launch
+from api.views import getData
 
 favicon_view = RedirectView.as_view(url='/static/favicon.ico', permanent=True)
 
 urlpatterns = [
-    path("/rapi", include())
+    path("rapi/", getData),
     path('api/login', login, name='mosanid-login'),
     path('api/launch', launch, name='mosanid-launch'),
     path('api/jwks', get_jwks, name='mosanid-jwks'),
