@@ -8,35 +8,18 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import COURSES from "./scenes/courses";
 
+
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
-
-  // send post request to backend
-  (async () => {
-    try {
-      const resp = await fetch("/api/hi", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "hi": window.location.pathname
-        }
-      });
-      console.log(resp.json());
-    }
-    catch (err) {
-      console.error(err);
-    }
-  })();
-
-
-
+  const ins = "Hii";
+  
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="app">
-          <Sidebar isSidebar={isSidebar} />
+          <Sidebar instructor_name={ins} />
           <main className="content">
             <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
