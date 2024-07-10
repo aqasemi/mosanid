@@ -1,3 +1,4 @@
 python-magic
 unstructured[all-docs]
 python-pptx
+embedchain

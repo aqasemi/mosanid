@@ -34,18 +34,6 @@ class Mosanid(JSONSerializable):
         """
         Initializes the EmbedChain instance, sets up a vector DB client and
         creates a collection.
-
-        :param config: Configuration just for the app, not the db or llm or embedder.
-        :type config: BaseAppConfig
-        :param llm: Instance of the LLM you want to use.
-        :type llm: BaseLlm
-        :param db: Instance of the Database to use, defaults to None
-        :type db: BaseVectorDB, optional
-        :param embedder: instance of the embedder to use, defaults to None
-        :type embedder: BaseEmbedder, optional
-        :param system_prompt: System prompt to use in the llm query, defaults to None
-        :type system_prompt: Optional[str], optional
-        :raises ValueError: No database or embedder provided.
         """
         self.config = config
         self.cache_config = None
@@ -102,39 +90,21 @@ class Mosanid(JSONSerializable):
     def add(
         self,
         source: Any,
-        data_type: Optional[DataType] = None,
         metadata: Optional[dict[str, Any]] = None,
         config: Optional[AddConfig] = None,
-        dry_run=False,
         loader: Optional[BaseLoader] = None,
         chunker: Optional[BaseChunker] = None,
         **kwargs: Optional[dict[str, Any]],
     ):
         """
-        Adds the data from the given URL to the vector db.
         Loads the data, chunks it, create embedding for each chunk
         and then stores the embedding to vector database.
 
-        :param source: The data to embed, can be a URL, local file or raw content, depending on the data type.
-        :type source: Any
-        :param data_type: Automatically detected, but can be forced with this argument. The type of the data to add,
-        defaults to None
-        :type data_type: Optional[DataType], optional
+        :param source: The data to embed. Local file.
         :param metadata: Metadata associated with the data source., defaults to None
-        :type metadata: Optional[dict[str, Any]], optional
         :param config: The `AddConfig` instance to use as configuration options., defaults to None
-        :type config: Optional[AddConfig], optional
-        :raises ValueError: Invalid data type
-        :param dry_run: Optional. A dry run displays the chunks to ensure that the loader and chunker work as intended.
-        defaults to False
-        :type dry_run: bool
-        :param loader: The loader to use to load the data, defaults to None
-        :type loader: BaseLoader, optional
-        :param chunker: The chunker to use to chunk the data, defaults to None
-        :type chunker: BaseChunker, optional
         :param kwargs: To read more params for the query function
         :type kwargs: dict[str, Any]
-        :return: source_hash, a md5-hash of the source, in hexadecimal representation.
         :rtype: str
         """
         if config is not None:
@@ -156,17 +126,7 @@ class Mosanid(JSONSerializable):
         except ValueError:
             pass
 
-        if data_type:
-            try:
-                data_type = DataType(data_type)
-            except ValueError:
-                logger.info(
-                    f"Invalid data_type: '{data_type}', using `custom` instead.\n Check docs to pass the valid data type: `https://docs.embedchain.ai/data-sources/overview`"  # noqa: E501
-                )
-                data_type = DataType.CUSTOM
-
-        if not data_type:
-            data_type = detect_datatype(source)
+        data_type = detect_datatype(source)
 
         # `source_hash` is the md5 hash of the source argument
         source_hash = hashlib.md5(str(source).encode("utf-8")).hexdigest()
@@ -175,22 +135,15 @@ class Mosanid(JSONSerializable):
 
         data_formatter = DataFormatter(data_type, config, loader, chunker)
         documents, metadatas, _ids, new_chunks = self._load_and_embed(
-            data_formatter.loader, data_formatter.chunker, source, metadata, source_hash, config, dry_run, **kwargs
+            data_formatter.loader, data_formatter.chunker, source, metadata, source_hash, config, **kwargs
         )
-        if data_type in {DataType.DOCS_SITE}:
-            self.is_docs_site_instance = True
 
-        # Convert the source to a string if it is not already
-        if not isinstance(source, str):
-            source = str(source)
-
-        # Insert the data into the 'ec_data_sources' table
         self.db_session.add(
             DataSource(
                 hash=source_hash,
                 app_id=self.config.id,
                 type=data_type.value,
-                value=source,
+                value=str(source),
                 metadata=json.dumps(metadata),
             )
         )
@@ -200,28 +153,15 @@ class Mosanid(JSONSerializable):
             logger.error(f"Error adding data source: {e}")
             self.db_session.rollback()
 
-        if dry_run:
-            data_chunks_info = {"chunks": documents, "metadata": metadatas, "count": len(documents), "type": data_type}
-            logger.debug(f"Dry run info : {data_chunks_info}")
-            return data_chunks_info
-
         return source_hash
 
     def _get_existing_doc_id(self, chunker: BaseChunker, src: Any):
         """
         Get id of existing document for a given source, based on the data type
         """
-        # Find existing embeddings for the source
-        # Depending on the data type, existing embeddings are checked for.
         if chunker.data_type.value in [item.value for item in DirectDataType]:
-            # DirectDataTypes can't be updated.
-            # Think of a text:
-            #   Either it's the same, then it won't change, so it's not an update.
-            #   Or it's different, then it will be added as a new text.
             return None
         elif chunker.data_type.value in [item.value for item in IndirectDataType]:
-            # These types have an indirect source reference
-            # As long as the reference is the same, they can be updated.
             where = {"url": src}
             if chunker.data_type == DataType.JSON and is_valid_json_string(src):
                 url = hashlib.sha256((src).encode("utf-8")).hexdigest()
@@ -238,27 +178,6 @@ class Mosanid(JSONSerializable):
                 return existing_embeddings["metadatas"][0]["doc_id"]
             else:
                 return None
-        elif chunker.data_type.value in [item.value for item in SpecialDataType]:
-            # These types don't contain indirect references.
-            # Through custom logic, they can be attributed to a source and be updated.
-            if chunker.data_type == DataType.QNA_PAIR:
-                # QNA_PAIRs update the answer if the question already exists.
-                where = {"question": src[0]}
-                if self.config.id is not None:
-                    where.update({"app_id": self.config.id})
-
-                existing_embeddings = self.db.get(
-                    where=where,
-                    limit=1,
-                )
-                if len(existing_embeddings.get("metadatas", [])) > 0:
-                    return existing_embeddings["metadatas"][0]["doc_id"]
-                else:
-                    return None
-            else:
-                raise NotImplementedError(
-                    f"SpecialDataType {chunker.data_type} must have a custom logic to check for existing data"
-                )
         else:
             raise TypeError(
                 f"{chunker.data_type} is type {type(chunker.data_type)}. "
@@ -273,7 +192,6 @@ class Mosanid(JSONSerializable):
         metadata: Optional[dict[str, Any]] = None,
         source_hash: Optional[str] = None,
         add_config: Optional[AddConfig] = None,
-        dry_run=False,
         **kwargs: Optional[dict[str, Any]],
     ):
         """
@@ -292,8 +210,6 @@ class Mosanid(JSONSerializable):
         :type source_hash: str, optional
         :param add_config: The `AddConfig` instance to use as configuration options.
         :type add_config: AddConfig, optional
-        :param dry_run: A dry run returns chunks and doesn't update DB.
-        :type dry_run: bool, defaults to False
         :return: (list) documents (embedded text), (list) metadata, (list) ids, (int) number of chunks
         """
         existing_doc_id = self._get_existing_doc_id(chunker=chunker, src=src)
@@ -311,25 +227,11 @@ class Mosanid(JSONSerializable):
             logger.info("Doc content has not changed. Skipping creating chunks and embeddings")
             return [], [], [], 0
 
-        # this means that doc content has changed.
         if existing_doc_id and existing_doc_id != new_doc_id:
             logger.info("Doc content has changed. Recomputing chunks and embeddings intelligently.")
             self.db.delete({"doc_id": existing_doc_id})
 
-        # get existing ids, and discard doc if any common id exist.
-        where = {"url": src}
-        if chunker.data_type == DataType.JSON and is_valid_json_string(src):
-            url = hashlib.sha256((src).encode("utf-8")).hexdigest()
-            where = {"url": url}
-
-        # if data type is qna_pair, we check for question
-        if chunker.data_type == DataType.QNA_PAIR:
-            where = {"question": src[0]}
-
-        if self.config.id is not None:
-            where["app_id"] = self.config.id
-
-        db_result = self.db.get(ids=ids, where=where)  # optional filter
+        db_result = self.db.get(ids=ids, where={"url": src})
         existing_ids = set(db_result["ids"])
         if len(existing_ids):
             data_dict = {id: (doc, meta) for id, doc, meta in zip(ids, documents, metadatas)}
@@ -346,43 +248,30 @@ class Mosanid(JSONSerializable):
             ids = list(data_dict.keys())
             documents, metadatas = zip(*data_dict.values())
 
-        # Loop though all metadatas and add extras.
         new_metadatas = []
         for m in metadatas:
-            # Add app id in metadatas so that they can be queried on later
             if self.config.id:
                 m["app_id"] = self.config.id
 
-            # Add hashed source
             m["hash"] = source_hash
 
-            # Note: Metadata is the function argument
             if metadata:
-                # Spread whatever is in metadata into the new object.
                 m.update(metadata)
-
             new_metadatas.append(m)
+
         metadatas = new_metadatas
 
-        if dry_run:
-            return list(documents), metadatas, ids, 0
-
-        # Count before, to calculate a delta in the end.
         chunks_before_addition = self.db.count()
 
-        # Filter out empty documents and ensure they meet the API requirements
         valid_documents = [doc for doc in documents if doc and isinstance(doc, str)]
-
         documents = valid_documents
 
         # Chunk documents into batches of 2048 and handle each batch
-        # helps wigth large loads of embeddings  that hit OpenAI limits
         document_batches = [documents[i : i + 2048] for i in range(0, len(documents), 2048)]
         metadata_batches = [metadatas[i : i + 2048] for i in range(0, len(metadatas), 2048)]
         id_batches = [ids[i : i + 2048] for i in range(0, len(ids), 2048)]
         for batch_docs, batch_meta, batch_ids in zip(document_batches, metadata_batches, id_batches):
             try:
-                # Add only valid batches
                 if batch_docs:
                     self.db.add(documents=batch_docs, metadatas=batch_meta, ids=batch_ids, **kwargs)
             except Exception as e:
@@ -443,7 +332,6 @@ class Mosanid(JSONSerializable):
         self,
         input_query: str,
         config: BaseLlmConfig = None,
-        dry_run=False,
         where: Optional[dict] = None,
         citations: bool = False,
         **kwargs: dict[str, Any],
@@ -458,9 +346,6 @@ class Mosanid(JSONSerializable):
         :param config: The `BaseLlmConfig` instance to use as configuration options. This is used for one method call.
         To persistently use a config, declare it during app init., defaults to None
         :type config: BaseLlmConfig, optional
-        :param dry_run: A dry run does everything except send the resulting prompt to
-        the LLM. The purpose is to test the prompt, not the response., defaults to False
-        :type dry_run: bool, optional
         :param where: A dictionary of key-value pairs to filter the database results., defaults to None
         :type where: dict[str, str], optional
         :param citations: A boolean to indicate if db should fetch citation source
@@ -486,11 +371,11 @@ class Mosanid(JSONSerializable):
 
         if self.llm.config.token_usage:
             answer, token_info = self.llm.query(
-                input_query=input_query, contexts=contexts_data_for_llm_query, config=config, dry_run=dry_run
+                input_query=input_query, contexts=contexts_data_for_llm_query, config=config
             )
         else:
             answer = self.llm.query(
-                input_query=input_query, contexts=contexts_data_for_llm_query, config=config, dry_run=dry_run
+                input_query=input_query, contexts=contexts_data_for_llm_query, config=config
             )
 
         if citations:
