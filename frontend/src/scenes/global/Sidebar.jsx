@@ -118,7 +118,7 @@ const Sidebar = () => {
             />
             <Item
               title="Competitions"
-              to="/"
+              to="/Ongoing-Competitions"
               icon={<MilitaryTechIcon />}
               selected={selected}
               setSelected={setSelected}
