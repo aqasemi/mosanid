@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from 
+
+# This page is just a placeholder for the API views.
+# The views data should be retreived from the database directly in production.
 
 
 def get_chapters(request):
@@ -13,8 +15,9 @@ def get_chapters(request):
             { "title": "Chapter 14: Text I/O" },
             { "title": "Chapter 15: Abstract Classes and Interfaces" },
             { "title": "Chapter 16: Event Driven Programming" },
-            { "title": "Chapter 21: Generics" },]
+            { "title": "Chapter 21: Generics" },],
     }
+    context.update(get_session())
 
     return JsonResponse(context)
 
@@ -93,7 +96,7 @@ def get_students(request):
     return JsonResponse(context)
 
 
-def get_session(request):
+def get_session():
     context ={ "sessions" : [
   {
     "title": 'Session 1: Review 2d Array',
@@ -114,7 +117,7 @@ def get_session(request):
     "score": 9,
   },]}
 
-    return JsonResponse(context)
+    return context
 
 
 def get_transactions(request):
