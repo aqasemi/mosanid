@@ -5,7 +5,7 @@ from time import sleep
 
 
 app = App()
-app.add('/docs/relations.pdf')
+# app.add('/docs/relations.pdf')
 
 def generate_questions(
     num_questions: int,
@@ -28,25 +28,28 @@ def print_message(response: str):
     else:
         print(response)
     
-while True:
-    print()
-    topic = input(">> ")
+# while True:
+#     print()
+#     topic = input(">> ")
 
-    if topic == "exit":
-        break
-    if topic == "":
-        continue
+#     if topic == "exit":
+#         break
+#     if topic == "":
+#         continue
 
-    q_count = 5
-    for index in range(q_count):
-        question_count = q_count - index
-        response = generate_questions(question_count, topic)
-        if "Sorry" in response:
-            print_message(
-                f"Failed to generate {question_count} questions about {topic}!"
-            )
-            print()
-            continue
-        else:
-            print_message(response)
-            break
+#     q_count = 5
+#     for index in range(q_count):
+#         question_count = q_count - index
+#         response = generate_questions(question_count, topic)
+#         if "Sorry" in response:
+#             print_message(
+#                 f"Failed to generate {question_count} questions about {topic}!"
+#             )
+#             print()
+#             continue
+#         else:
+#             print_message(response)
+#             break
+
+from mosanidai.prompt import prompts
+print(app.query(prompts['mcq'].format(topic="reflexive relation", number_of_questions=3)), citations=True)

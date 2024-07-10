@@ -17,9 +17,9 @@ import { styled } from "@mui/material/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
 import { tokens } from "../../theme";
-// import axios from "axios";
+import axios from "axios";
 import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
-import { chapters, sessions } from "./../../data/mockData";
+
 
 
 const CustomCard = styled(Card)(({ theme }) => ({
@@ -72,12 +72,15 @@ const CourseSectionOne = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    // axios.get('https://jsonplaceholder.typicode.com/users')
-      // .then(response => setUsers(response.data))
-      // .catch(error => console.error('Error fetching users:', error));
+    const url = window.location.origin;
+    axios.get(url+'/rapi')
+      .then(response => setData(response.data))
+      .catch(error => console.error('Error fetching users:', error));
       console.log('hiiiiiiiiiii')
-      setData({sessions: sessions, chapters: chapters})
+      console.log(data)
   }, []);
+
+
   return (
     <Box>
       <Box display="flex" alignItems="center" mb={2}>
@@ -107,7 +110,6 @@ const CourseSectionOne = () => {
               border: "2px solid #423BA0",
               borderRadius: "16px",
               overflow: "hidden",
-              mb: 4,
             }}
           >
             <AccordionSummary
@@ -204,16 +206,12 @@ const OngoingCompetitions = () => {
         sx={{
           borderRadius: "16px",
           padding: theme.spacing(2),
-          backgroundColor: "#1F2A40",
           marginBottom: theme.spacing(2),
           color: "white",
           mb: 2,
           backgroundColor: colors.primary[400],
-          color: "white",
           border: "2px solid #423BA0",
-          borderRadius: "16px",
           overflow: "hidden",
-          mb: 4,
         }}
       >
         <CardContent

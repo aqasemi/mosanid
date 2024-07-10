@@ -57,9 +57,6 @@ def load_single_document(file_path: str) -> List[Document]:
     raise ValueError(f"Unsupported file extension '{ext}'")
 
 def load_documents(source_dir: str, ignored_files: List[str] = []) -> List[Document]:
-    """
-    Loads all documents from the source documents directory, ignoring specified files
-    """
     all_files = []
     for ext in LOADER_MAPPING:
         all_files.extend(
@@ -105,10 +102,7 @@ def does_vectorstore_exist(persist_directory: str) -> bool:
                 return True
     return False
 
-def main():
-    # Create embeddings
-    embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name)
-
+def main(embeddings):
     if does_vectorstore_exist(persist_directory):
         # Update and store locally vectorstore
         print(f"Appending to existing vectorstore at {persist_directory}")
@@ -126,7 +120,6 @@ def main():
     db.persist()
     db = None
 
-    print(f"Ingestion complete! You can now run privateGPT.py to query your documents")
 
 
 if __name__ == "__main__":

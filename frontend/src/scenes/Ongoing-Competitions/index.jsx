@@ -66,16 +66,12 @@ const OngoingCompetition = ({ onStart }) => {
         sx={{
           borderRadius: "16px",
           padding: theme.spacing(2),
-          backgroundColor: "#1F2A40",
           marginBottom: theme.spacing(2),
           color: "white",
           mb: 2,
           backgroundColor: colors.primary[400],
-          color: "white",
           border: "2px solid #423BA0",
-          borderRadius: "16px",
           overflow: "hidden",
-          mb: 4,
         }}
       >
         <CardContent

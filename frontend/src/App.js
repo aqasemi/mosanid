@@ -6,7 +6,7 @@ import Dashboard from './scenes/dashboard';
 import FAQ from './scenes/faq';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { ColorModeContext, useMode } from './theme';
-import COURSES from './scenes/Courses';
+import COURSES from './scenes/courses';
 import PracticeSessionQuestion from './scenes/practice-question';
 import SessionComplete from './scenes/session-complete';
 import Feedback from './scenes/QFeedback';
@@ -18,10 +18,12 @@ import CalculatingResults from './scenes/Calculating-Results';
 import Leaderboard from './scenes/Leader-board';
 import StudentHomePage from './scenes/Student-HomePage';
 
+
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const location = useLocation();
+  const instructor_name = "Dr. Khaled";
 
   const shouldHideSidebarAndTopbar =
     location.pathname === '/practice-question' ||
@@ -38,11 +40,16 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="app">
-          {!shouldHideSidebarAndTopbar && <Sidebar isSidebar={isSidebar} />}
+          {!shouldHideSidebarAndTopbar && <Sidebar isSidebar={isSidebar} instructor_name={instructor_name} />}
           <main className="content">
             {!shouldHideSidebarAndTopbar && <Topbar setIsSidebar={setIsSidebar} />}
             <Routes>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/api/launch" element={<Dashboard />} />
+              <Route path="/auth/launch" element={<Dashboard />} />
+              <Route path="/test" element={<Dashboard />} />
+
               <Route path="/faq" element={<FAQ />} />
               <Route path="/courses" element={<COURSES />} />
               <Route path="/practice-question" element={<PracticeSessionQuestion />} />

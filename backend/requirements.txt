@@ -1,3 +1,4 @@
 django
 djangorestframework
-pylit1p3
+django-cors-headers
+pylti1p3

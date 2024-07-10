@@ -2,10 +2,7 @@ import logging
 
 from mosanidai.mosanid import Mosanid
 from embedchain.core.db.database import get_session, init_db, setup_engine
-from embedchain.embedder.google import GoogleAIEmbedder # or openai
-from embedchain.config.embedder.google import GoogleAIEmbedderConfig
-from embedchain.llm.google import GoogleLlm # or openai
-from embedchain.config.llm.base import BaseLlmConfig
+from embedchain.factory import EmbedderFactory, LlmFactory
 from embedchain.config import AppConfig
 from embedchain.helpers.json_serializable import register_deserializable
 from embedchain.vectordb.chroma import ChromaDB
@@ -26,33 +23,26 @@ os.environ.setdefault("EMBEDCHAIN_DB_URI", f"sqlite:///{SQLITE_PATH}")
 @register_deserializable
 class App(Mosanid):
     def __init__(self):
-        """
-        Initialize a new `App` instance.
-        """
-
         chroma_config = {} # TODO
         self.db = ChromaDB(config=chroma_config)
         setup_engine(database_uri=os.environ.get("EMBEDCHAIN_DB_URI"))
         init_db()
-        
+
+        embedding_model_config = {
+            "model": "text-embedding-ada-002",
+        }
+
         llm_config = {
-            "model": "gemini-1.5-pro",
+            "model": "gpt-4o",
             "temperature": 0.1,
             "max_tokens": 2048,
             "top_p": 1,
             "stream": True
         }
-        self.llm = GoogleLlm(BaseLlmConfig(**llm_config)) # or openai
+        self.embedding_model = EmbedderFactory.create("openai", embedding_model_config)
+        self.llm = LlmFactory.create("openai", llm_config)
 
-        embedding_model_config = {
-            "model": 'models/text-embedding-004',
-            "task_type": "retrieval_document",
-            "title": "Mosanid Embedding model"
-        }
-        self.embedding_model = GoogleAIEmbedder(
-            GoogleAIEmbedderConfig(**embedding_model_config)
-        ) # or openai
-
+    
         self.config = AppConfig()
         self.chunker = None
         self.cache_config = None
@@ -64,11 +54,16 @@ class App(Mosanid):
 
 
     def _init_db(self):
-        """
-        Initialize the database.
-        """
         self.db._set_embedder(self.embedding_model)
         self.db._initialize()
         self.db.set_collection_name(self.db.config.collection_name)
 
 
+    def generate_questions(
+        self,
+        num_questions: int,
+        topic: str,
+    ):
+        in_query = f"""Create {num_questions} quiz questions with 4 choices(a,b,c,d) and answer about {topic},avoid markup format,MUST have one answser,if you dont know reply Sorry,I don't know"""
+        response = self.query(input_query=in_query)
+        return response

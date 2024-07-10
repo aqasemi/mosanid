@@ -43,14 +43,14 @@
     }],
     "https://blackboard.com": [{
         "default": true,
-        "client_id": "e68fa64e-cf33-4e57-901c-e60ed448f419",
+        "client_id": "6dae3225-d5e1-4574-aa90-867dcf081fe3",
         "auth_login_url": "https://developer.blackboard.com/api/v1/gateway/oidcauth",
         "auth_token_url": "https://developer.blackboard.com/api/v1/gateway/oauth2/jwttoken",
-        "key_set_url": "https://developer.blackboard.com/api/v1/management/applications/e68fa64e-cf33-4e57-901c-e60ed448f419/jwks.json",
+        "key_set_url": "https://developer.blackboard.com/api/v1/management/applications/6dae3225-d5e1-4574-aa90-867dcf081fe3/jwks.json",
         "key_set": null,
         "private_key_file": "private.key",
         "public_key_file": "public.key",
-        "deployment_ids": ["cc7181d8-6173-4dec-929e-1b0459b5f9df"]
+        "deployment_ids": ["d562ea27-fca9-4562-9f1e-f605df7cb29f"]
     }],
     "http://moodle.test": [{
         "default": true,
