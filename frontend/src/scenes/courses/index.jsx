@@ -19,6 +19,8 @@ import AddIcon from "@mui/icons-material/Add";
 import { tokens } from "../../theme";
 import axios from "axios";
 import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
+import {sessions, chapters} from "./../../data/mockData.js"
+
 
 
 
@@ -36,6 +38,7 @@ const SessionCard = ({ session }) => {
         border: "2px solid #423BA0",
         borderRadius: "16px",
         overflow: "hidden",
+        maxHeight: "250px",
         mb: 10,
       }}
     >
@@ -75,7 +78,7 @@ const CourseSectionOne = () => {
     const url = window.location.origin;
     axios.get(url+'/rapi')
       .then(response => setData(response.data))
-      .catch(error => console.error('Error fetching users:', error));
+      .catch(error => {console.log(error); setData({sessions: sessions, chapters: chapters})});
       console.log('hiiiiiiiiiii')
       console.log(data)
   }, []);
