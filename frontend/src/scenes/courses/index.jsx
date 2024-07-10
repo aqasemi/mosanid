@@ -80,6 +80,7 @@ const CourseSectionOne = () => {
       console.log(data)
   }, []);
 
+
   return (
     <Box>
       <Box display="flex" alignItems="center" mb={2}>
@@ -109,7 +110,6 @@ const CourseSectionOne = () => {
               border: "2px solid #423BA0",
               borderRadius: "16px",
               overflow: "hidden",
-              mb: 4,
             }}
           >
             <AccordionSummary
@@ -206,16 +206,12 @@ const OngoingCompetitions = () => {
         sx={{
           borderRadius: "16px",
           padding: theme.spacing(2),
-          backgroundColor: "#1F2A40",
           marginBottom: theme.spacing(2),
           color: "white",
           mb: 2,
           backgroundColor: colors.primary[400],
-          color: "white",
           border: "2px solid #423BA0",
-          borderRadius: "16px",
           overflow: "hidden",
-          mb: 4,
         }}
       >
         <CardContent

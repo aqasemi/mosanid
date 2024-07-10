@@ -99,13 +99,6 @@ class Mosanid(JSONSerializable):
         """
         Loads the data, chunks it, create embedding for each chunk
         and then stores the embedding to vector database.
-
-        :param source: The data to embed. Local file.
-        :param metadata: Metadata associated with the data source., defaults to None
-        :param config: The `AddConfig` instance to use as configuration options., defaults to None
-        :param kwargs: To read more params for the query function
-        :type kwargs: dict[str, Any]
-        :rtype: str
         """
         if config is not None:
             pass
@@ -196,21 +189,6 @@ class Mosanid(JSONSerializable):
     ):
         """
         Loads the data from the given URL, chunks it, and adds it to database.
-
-        :param loader: The loader to use to load the data.
-        :type loader: BaseLoader
-        :param chunker: The chunker to use to chunk the data.
-        :type chunker: BaseChunker
-        :param src: The data to be handled by the loader. Can be a URL for
-        remote sources or local content for local loaders.
-        :type src: Any
-        :param metadata: Metadata associated with the data source.
-        :type metadata: dict[str, Any], optional
-        :param source_hash: Hexadecimal hash of the source.
-        :type source_hash: str, optional
-        :param add_config: The `AddConfig` instance to use as configuration options.
-        :type add_config: AddConfig, optional
-        :return: (list) documents (embedded text), (list) metadata, (list) ids, (int) number of chunks
         """
         existing_doc_id = self._get_existing_doc_id(chunker=chunker, src=src)
         app_id = self.config.id if self.config is not None else None
@@ -296,8 +274,6 @@ class Mosanid(JSONSerializable):
         Queries the vector database based on the given input query.
         Gets relevant doc based on the query
 
-        :param input_query: The query to use.
-        :type input_query: str
         :param config: The query configuration, defaults to None
         :type config: Optional[BaseLlmConfig], optional
         :param where: A dictionary of key-value pairs to filter the database results, defaults to None

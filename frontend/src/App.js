@@ -6,7 +6,7 @@ import Dashboard from './scenes/dashboard';
 import FAQ from './scenes/faq';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { ColorModeContext, useMode } from './theme';
-import COURSES from './scenes/Courses';
+import COURSES from './scenes/courses';
 import PracticeSessionQuestion from './scenes/practice-question';
 import SessionComplete from './scenes/session-complete';
 import Feedback from './scenes/QFeedback';
@@ -44,11 +44,12 @@ function App() {
           <main className="content">
             {!shouldHideSidebarAndTopbar && <Topbar setIsSidebar={setIsSidebar} />}
             <Routes>
-              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/api/launch" element={<Dashboard />} />
               <Route path="/auth/launch" element={<Dashboard />} />
               <Route path="/test" element={<Dashboard />} />
+
               <Route path="/faq" element={<FAQ />} />
               <Route path="/courses" element={<COURSES />} />
               <Route path="/practice-question" element={<PracticeSessionQuestion />} />

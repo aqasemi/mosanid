@@ -1,4 +1,7 @@
 python-magic
 unstructured[all-docs]
 python-pptx
+nltk
+scipy
 embedchain
+json-repair

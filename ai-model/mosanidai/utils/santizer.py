@@ -58,45 +58,43 @@ def clean_text(text: str, lstrip_nonalpha=True):
       returns:
         text: (str) - cleaned version of input text
   """
-  # pylint: disable=inconsistent-quotes
   text = text.replace("’", "'")
   text = text.replace('”', '"')
   text = text.replace('“', '"')
-  #Transliterate non-ASCII characters
-  # text = unidecode(text)
+
   text = re.sub("--", "-", text)
   # text = re.sub(r" \([^)]*\)", " ", text)
   text = re.sub(r" {1,}\.", ".", text)
   text = re.sub(r" \t", " ", text)
   text = re.sub(r" +", " ", text)
+  
   # remove empty parenthesis
   text = text.replace("()", " ")
   text = remove_unbalanced_brackets(text)
+  
   # remove brackets which has low context words in them
   text = remove_low_context_brackets(text)
+  
   # remove non-alphabet characters from start of paragraph
   if lstrip_nonalpha:
     text = re.sub(r"^[^a-zA-Z_____]*", "", text)
+  
   # replacing more than one space by single space
   text = re.sub(" {2,}", " ", text)
   text = text.replace(" ’", "’")
   text = text.replace(" - ", "-")
   text = text.replace(" ,", ",")
   text = text.replace(" .", ".")
-  #remove extra underscores. Example: _________LO 22. Explain the term kinship.
+  
+  # remove extra underscores. Example: _________LO 22. Explain the term kinship.
   text = re.sub(r"_{2,}", "", text)
   text = re.sub(r"\s+$", "", text, 0, re.MULTILINE)
+  
   return text.strip()
 
 
 
 def remove_unbalanced_brackets(text: str) -> str:
-  """
-  Function to remove unbalanced brackets from input text.
-  Example:
-    input text: Some neurofibromas transform to malignant tumor {(MPNST)).
-    output text: Some neurofibromas transform to malignant tumor (MPNST).
-  """
   remove_square = set()
   remove_curly = set()
   remove_parenthesis = set()
