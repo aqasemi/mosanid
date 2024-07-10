@@ -24,6 +24,9 @@ function App() {
             <Topbar setIsSidebar={setIsSidebar} />
             <Routes>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/api/launch" element={<Dashboard />} />
+              <Route path="/test" element={<Dashboard />} />
+              <Route path="/auth/launch" element={<Dashboard />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/courses" element={<COURSES />} />
             </Routes>
