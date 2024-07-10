@@ -23,6 +23,7 @@ function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const location = useLocation();
+  const instructor_name = "Dr. Khaled";
 
   const shouldHideSidebarAndTopbar =
     location.pathname === '/practice-question' ||
@@ -39,7 +40,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className="app">
-          {!shouldHideSidebarAndTopbar && <Sidebar isSidebar={isSidebar} />}
+          {!shouldHideSidebarAndTopbar && <Sidebar isSidebar={isSidebar} instructor_name={instructor_name} />}
           <main className="content">
             {!shouldHideSidebarAndTopbar && <Topbar setIsSidebar={setIsSidebar} />}
             <Routes>
