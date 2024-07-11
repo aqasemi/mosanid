@@ -1,18 +1,25 @@
-import { Box, Chip, Typography, useTheme, Paper } from "@mui/material";
-import { tokens } from "../../theme";
+import React, { useState } from "react";
+import {
+  Box,
+  Chip,
+  Typography,
+  Paper,
+  ListItemText, // Import ListItemText
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AlarmOnIcon from "@mui/icons-material/AlarmOn";
-import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { tokens } from "../../theme";
 import {
   studentData,
   statusColors,
@@ -22,6 +29,7 @@ import {
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [showAll, setShowAll] = useState(false); // Define showAll state
 
   return (
     <Box m="20px">
@@ -42,7 +50,7 @@ const Dashboard = () => {
             CPCS-203 Programming (II)
           </Typography>
           <Typography variant="h4" fontWeight="bold" color="textPrimary">
-            Chapter 8: Objects and Classes competition
+            Chapter 8: Objects and Classes
           </Typography>
         </Box>
       </Box>
@@ -63,7 +71,7 @@ const Dashboard = () => {
         >
           <StatBox
             title="80%"
-            subtitle="Correct answers"
+            subtitle="Wrong answers"
             progress="0.75"
             change="14%"
             icon={
@@ -82,7 +90,7 @@ const Dashboard = () => {
         >
           <StatBox
             title="20%"
-            subtitle="Wrong answers"
+            subtitle="Correct answers"
             progress="0.20"
             change="-10%"
             icon={
@@ -130,8 +138,104 @@ const Dashboard = () => {
             }
           />
         </Box>
-
         {/* ROW 2 */}
+        {/* Recommendation Box */}
+        <Box
+          gridColumn="span 8"
+          backgroundColor={colors.primary[400]}
+          display="flex"
+          flexDirection="column"
+          alignItems="flex-start"
+          justifyContent="center"
+          p="20px"
+          mt="20px"
+        >
+          <Typography
+            color={colors.grey[100]}
+            variant="h5"
+            fontWeight="600"
+            mb="10px"
+          >
+            Recommendation
+          </Typography>
+          <Typography variant="h6" color="textPrimary" textAlign="left">
+            Given that your students have an 80% incorrect answer rate on
+            Chapter 8: Objects and Classes, I recommend using a combination of
+            interactive and visual techniques, engaging methods, personalized
+            feedback, and practical applications to enhance their understanding.
+                <Typography
+                  variant="body2"
+                  sx={{ color: "#4B23B6", textAlign: "center" }}
+                  onClick={() => setShowAll(!showAll)}
+                >
+                  {showAll ? "Show less" : "Show more"}
+                </Typography>
+              
+          
+          </Typography>
+          {showAll && (
+            <Typography variant="body2" color="textPrimary" textAlign="left" mt={2}>
+              Here are some specific suggestions: Use visual aids like diagrams and flowcharts,
+              incorporate interactive coding sessions, and provide personalized feedback and 
+              practical examples to solidify their understanding.
+            </Typography>
+          )}
+        </Box>
+        <Box
+          gridColumn="span 4"
+          gridRow="span 4"
+          backgroundColor={colors.primary[400]}
+          overflow="auto"
+          mt="20px"
+        >
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            borderBottom={`4px solid ${colors.primary[500]}`}
+            colors={colors.grey[100]}
+            p="15px"
+          >
+            <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
+              Question statistics
+            </Typography>
+          </Box>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            borderBottom={`4px solid ${colors.primary[500]}`}
+            colors={colors.grey[100]}
+            p="15px"
+          >
+            <TableContainer
+              component={Paper}
+              sx={{ backgroundColor: colors.primary[400] }}
+            >
+              <Table sx={{ minWidth: 50 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Question Number</TableCell>
+                    <TableCell>Average Duration</TableCell>
+                    <TableCell>Accuracy</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {mockTransactions.map((row) => (
+                    <TableRow
+                      key={row.txId}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell>{row.Questionnumber}</TableCell>
+                      <TableCell>{row.AverageDuration}</TableCell>
+                      <TableCell>{row.Accuracy}%</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        </Box>
         <Box
           gridColumn="span 8"
           gridRow="span 4"
@@ -205,60 +309,6 @@ const Dashboard = () => {
                           />
                         </Box>
                       </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Box>
-        </Box>
-        <Box
-          gridColumn="span 4"
-          gridRow="span 4"
-          backgroundColor={colors.primary[400]}
-          overflow="auto"
-        >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            borderBottom={`4px solid ${colors.primary[500]}`}
-            colors={colors.grey[100]}
-            p="15px"
-          >
-            <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-              Question statistics
-            </Typography>
-          </Box>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            borderBottom={`4px solid ${colors.primary[500]}`}
-            colors={colors.grey[100]}
-            p="15px"
-          >
-            <TableContainer
-              component={Paper}
-              sx={{ backgroundColor: colors.primary[400] }}
-            >
-              <Table sx={{ minWidth: 50 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Question Number</TableCell>
-                    <TableCell>Average Duration</TableCell>
-                    <TableCell>Accuracy</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {mockTransactions.map((row) => (
-                    <TableRow
-                      key={row.txId}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell>{row.Questionnumber}</TableCell>
-                      <TableCell>{row.AverageDuration}</TableCell>
-                      <TableCell>{row.Accuracy}%</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
