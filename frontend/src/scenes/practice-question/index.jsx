@@ -17,7 +17,7 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import { useNavigate } from "react-router-dom";
 import QHeader from "../../components/QHeader"; // Import the QHeader component
-import {question} from "../../data/mockData"
+import {question, q_index} from "../../data/mockData"
 
 const PracticeSessionQuestion = () => {
   const [selectedAnswer, setSelectedAnswer] = React.useState("");
@@ -112,7 +112,7 @@ const PracticeSessionQuestion = () => {
         >
           <LinearProgress
             variant="determinate"
-            value={40}
+            value={(q_index+1)/5*100}
             sx={{
               flexGrow: 1,
               height: 10,
@@ -123,7 +123,7 @@ const PracticeSessionQuestion = () => {
             color="success"
           />
           <Typography variant="body2" sx={{ color: "#9E9E9E", fontSize: 14 }}>
-            3/5
+            {q_index+1}/5
           </Typography>
         </Box>
 
@@ -297,6 +297,7 @@ const PracticeSessionQuestion = () => {
               fontSize: "15px",
               "&:hover": { color: "#4B23B6", backgroundColor: "transparent" },
             }}
+            // onClick={() => q_index++}
           >
             Next
           </Button>

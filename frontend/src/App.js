@@ -34,7 +34,7 @@ function App() {
     location.pathname === '/Comp-Q'||
     location.pathname === '/Rank-List'||
     location.pathname === '/Calculating-Results'||
-    location.pathname === '/Leader-board';
+    location.pathname === '/leader-board';
 
   return (
     <ColorModeContext.Provider value={colorMode}>

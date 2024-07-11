@@ -98,7 +98,7 @@ const Sidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  Dr. Mohammed
+                  Abdulaziz Jazzar
                 </Typography>
               </Box>
             </Box>
