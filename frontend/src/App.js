@@ -17,6 +17,7 @@ import RankList from './scenes/Rank-List';
 import CalculatingResults from './scenes/Calculating-Results';
 import Leaderboard from './scenes/Leader-board';
 import StudentHomePage from './scenes/Student-HomePage';
+import ChatGPTInterface from './scenes/mosanid-Chat';
 
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
               <Route path="/api/launch" element={<Dashboard />} />
               <Route path="/auth/launch" element={<Dashboard />} />
               <Route path="/test" element={<Dashboard />} />
+              <Route path="/chat" element={<ChatGPTInterface />} />
 
               <Route path="/faq" element={<FAQ />} />
               <Route path="/courses" element={<COURSES />} />

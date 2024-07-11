@@ -17,11 +17,13 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import { useNavigate } from "react-router-dom";
 import QHeader from "../../components/QHeader"; // Import the QHeader component
+import {question} from "../../data/mockData"
 
 const PracticeSessionQuestion = () => {
   const [selectedAnswer, setSelectedAnswer] = React.useState("");
   const navigate = useNavigate();
 
+  
   const handleAnswerChange = (event) => {
     setSelectedAnswer(event.target.value);
   };
@@ -64,13 +66,7 @@ const PracticeSessionQuestion = () => {
         variant="h5"
         sx={{ color: selectedAnswer === value ? "#4B23B6" : "#4B23B6" }}
       >
-        {value === "A"
-          ? "Using a single loop"
-          : value === "B"
-          ? "By transposing the array"
-          : value === "C"
-          ? "By summing elements row by row"
-          : "By summing elements column by column"}
+        {question[value]}
       </Typography>
     </Box>
   );
@@ -91,7 +87,7 @@ const PracticeSessionQuestion = () => {
       >
         <QHeader
           title="Chapter 7: "
-          subtitle="Multidimensional Array Practice"
+          subtitle={question.chapter}
           handleClose={handleClose}
         />
       </Box>
@@ -127,7 +123,7 @@ const PracticeSessionQuestion = () => {
             color="success"
           />
           <Typography variant="body2" sx={{ color: "#9E9E9E", fontSize: 14 }}>
-            2/5
+            3/5
           </Typography>
         </Box>
 
@@ -143,8 +139,7 @@ const PracticeSessionQuestion = () => {
         >
           <CardContent>
             <Typography variant="h4" sx={{ mb: 2, color: "#4B23B6" }}>
-              How can you sum all elements in a two-dimensional array by column
-              in Java?
+              {question.content}
             </Typography>
             <FormControl component="fieldset" sx={{ width: "100%" }}>
               <RadioGroup

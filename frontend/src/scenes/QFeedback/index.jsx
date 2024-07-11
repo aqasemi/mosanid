@@ -19,6 +19,7 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import CropFreeIcon from "@mui/icons-material/CropFree";
 import { useNavigate } from "react-router-dom";
+import {question} from "../../data/mockData"
 
 const Feedback = () => {
   const [open, setOpen] = useState(false);
@@ -57,13 +58,7 @@ const Feedback = () => {
         variant="h5"
         sx={{ color: value === "C" ? "#4B23B6" : "#4B23B6" }}
       >
-        {value === "A"
-          ? "Using a single loop"
-          : value === "B"
-          ? "By transposing the array"
-          : value === "C"
-          ? "By summing elements row by row"
-          : "By summing elements column by column"}
+        {question[value]}
       </Typography>
     </Box>
   );
@@ -72,7 +67,7 @@ const Feedback = () => {
     <Box sx={{ backgroundColor: "#f0f0f0", minHeight: "100vh", p: 9 }}>
       <QHeader
         title="Chapter 7: "
-        subtitle="Multidimensional Array Practice"
+        subtitle={question.chapter}
         handleClose={handleCloseButtonClick}
       />
       <Box
@@ -103,8 +98,7 @@ const Feedback = () => {
           >
             <CardContent>
               <Typography variant="h4" sx={{ mb: 2, color: "#4B23B6" }}>
-                How can you sum all elements in a two-dimensional array by
-                column in Java?
+                {question.content}
               </Typography>
               <FormControl component="fieldset" sx={{ width: "100%" }}>
                 <RadioGroup
@@ -360,35 +354,7 @@ const Feedback = () => {
             }}
           >
             <Typography variant="h5" sx={{ color: "#4B23B6" }}>
-              {`public class ColumnSum {
-  public static void main(String[] args) {
-    int[][] array = {
-      {1, 2, 3},
-      {4, 5, 6},
-      {7, 8, 9}
-    };
-    
-    for (int col = 0; col < array[0].length; col++) {
-      int sum = 0;
-      for (int row = 0; row < array.length; row++) {
-        sum += array[row][col];
-      }
-      System.out.println("Sum of column " + col + ": " + sum);
-    }
-  }
-}
-
-Explanation of the Code:
-
-1. Initialization: The two-dimensional array is initialized with sample values.
-2. Column Iteration: The outer loop iterates through each column.
-3. Row Iteration and Sum Calculation:
-   - Inside the outer loop, a variable sum is initialized to 0 for each column.
-   - The inner loop (for (int i = 0; i < array.length; i++)) iterates through each row of the current column and adds the element to sum.
-4. Print Results: After calculating the sum for each column, it prints the result.
-
-This shorter example maintains clarity while providing the necessary steps to sum elements column by column in a two-dimensional array.
-`}
+              {question.explanation}
             </Typography>
           </Box>
         </Box>

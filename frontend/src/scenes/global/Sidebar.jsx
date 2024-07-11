@@ -4,7 +4,6 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
-import Groups2Icon from "@mui/icons-material/Groups2";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
@@ -12,6 +11,7 @@ import MilitaryTechIcon from "@mui/icons-material/MilitaryTech";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import ChatIcon from '@mui/icons-material/Chat';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -31,12 +31,11 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
   );
 };
 
-const Sidebar = ({instructor_name}) => {
+const Sidebar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
-  console.log(instructor_name);
 
   return (
     <Box
@@ -61,14 +60,25 @@ const Sidebar = ({instructor_name}) => {
       <ProSidebar collapsed={isCollapsed}>
         <Menu iconShape="square">
           {/* LOGO AND MENU ICON */}
-          <MenuItem
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
-            style={{
-              margin: "10px 0 20px 0",
-              color: colors.grey[100],
-            }}
-          ></MenuItem>
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", margin: "10px 0 20px 0" }}>
+            <MenuItem
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
+              style={{
+                color: colors.grey[100],
+              }}
+            />
+          </Box>
+
+          {!isCollapsed && (
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", mb: 2 }}>
+              <img
+                src="../../assets/LogoLight.png"
+                alt="Mosand Logo"
+                style={{ width: 74, height: 40 }}
+              />
+            </Box>
+          )}
 
           {!isCollapsed && (
             <Box mb="25px">
@@ -88,7 +98,7 @@ const Sidebar = ({instructor_name}) => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  {instructor_name}
+                  Dr. Mohammed
                 </Typography>
               </Box>
             </Box>
@@ -126,9 +136,9 @@ const Sidebar = ({instructor_name}) => {
             />
 
             <Item
-              title="community"
-              to="/"
-              icon={<Groups2Icon />}
+              title="mosanid"
+              to="/chat"
+              icon={<ChatIcon />}
               selected={selected}
               setSelected={setSelected}
             />
