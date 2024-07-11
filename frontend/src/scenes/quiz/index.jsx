@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 import {
   Box,
   Typography,
@@ -10,6 +9,10 @@ import {
   RadioGroup,
   FormControlLabel,
   FormControl,
+  Select,
+  MenuItem,
+  Checkbox,
+  ListItemText,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CheckIcon from "@mui/icons-material/Check";
@@ -18,7 +21,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material";
 import { tokens } from "../../theme";
-import QHeader from '../../components/QHeader'; // Import the QHeader component
+import QHeader from "../../components/QHeader"; // Import the QHeader component
 
 const CustomButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(1),
@@ -26,33 +29,32 @@ const CustomButton = styled(Button)(({ theme }) => ({
   textTransform: "none",
   padding: theme.spacing(1, 3),
   "&:hover": {
-    backgroundColor: "theme.palette.primary.dark",
+    backgroundColor: theme.palette.primary.dark,
   },
 }));
 
-const PracticeSession = ({ handleClose, SessionData={} }) => {
+const PracticeSession = ({ handleClose }) => {
   const [goal, setGoal] = React.useState("quickly");
-  const [data, setData] = React.useState([]);
-  
+  const [numQuestions, setNumQuestions] = React.useState(5); // State for number of questions
+  const [questionTypes, setQuestionTypes] = React.useState([]); // State for question types
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
 
-  React.useEffect(() => {
-    const url = window.location.origin;
-    axios.get(url+'/get_quizzes')
-      .then(response => setData(response.data))
-      .catch(error => {console.log(error)});
-      console.log(data)
-  }, []);
+  const handleNumQuestionsChange = (event) => {
+    setNumQuestions(event.target.value);
+  };
 
-  const handleGoalChange = (event, newGoal) => {
-    setGoal(newGoal);
+  const handleQuestionTypesChange = (event) => {
+    const value = event.target.value;
+    setQuestionTypes(typeof value === "string" ? value.split(",") : value);
   };
 
   const handleStartPractice = () => {
     navigate("/practice-question");
   };
+
+  const questionTypeOptions = ["Multiple Choice", "True/False", "Open Ended"];
 
   return (
     <Box
@@ -61,17 +63,22 @@ const PracticeSession = ({ handleClose, SessionData={} }) => {
         mx: "auto",
         p: 4,
         bgcolor: colors.primary[400],
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
       }}
-    ><QHeader
-    title={SessionData.chapter || "Chapter 7: "}
-    subtitle={SessionData.topic || "Multidimensional Array Practice"}
-    handleClose={handleClose}
-  />
+    >
+      <QHeader
+        title="Chapter 7: "
+        subtitle="Multidimensional Array Practice"
+        handleClose={handleClose}
+      />
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          width: "100%",
         }}
       >
         <Typography variant="h6" component="div">
@@ -82,114 +89,83 @@ const PracticeSession = ({ handleClose, SessionData={} }) => {
           <CloseIcon />
         </Button>
       </Box>
-      <Typography variant="h4" component="div" sx={{ mt: 2 }}>
-        How would you like to practice?
-      </Typography>
 
-      <Typography variant="subtitle1" sx={{ mt: 4 }}>
-        What’s your goal of this session?
+      <Typography variant="subtitle1" sx={{ mt: 4, width: "100%" }}>
+        Number of Questions
       </Typography>
-      <ToggleButtonGroup
-        value={goal}
-        exclusive
-        onChange={handleGoalChange}
-        sx={{ mt: 1 }}
-      >
-        <ToggleButton
-          value="quickly"
+      <FormControl fullWidth sx={{ mt: 1 }}>
+        <Select
+          value={numQuestions}
+          onChange={handleNumQuestionsChange}
+          displayEmpty
           sx={{
-            textTransform: "none",
-            "&.Mui-selected": {
+            color: "white",
+            bgcolor: colors.primary[400],
+            "& .MuiSelect-icon": {
               color: "white",
-              backgroundColor: "#423BA0",
-              "&:hover": {
-                backgroundColor: "#2C287E",
-              },
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#868dfb",
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#fff",
             },
           }}
         >
-          <AccessTimeIcon sx={{ mr: 1 }} />
-          Study quickly
-        </ToggleButton>
-        <ToggleButton
-          value="memorize"
-          sx={{
-            textTransform: "none",
-            "&.Mui-selected": {
-              backgroundColor: "#423BA0",
-              color: "white",
-              "&:hover": {
-                backgroundColor: "#2C287E",
-              },
-            },
-          }}
-        >
-          <CheckIcon sx={{ mr: 1 }} />
-          Memorize it all
-        </ToggleButton>
-      </ToggleButtonGroup>
-
-      <Typography variant="subtitle1" sx={{ mt: 4 }}>
-        How well do you know this material?
-      </Typography>
-      <FormControl component="fieldset">
-        <RadioGroup defaultValue="some" name="knowledge-level" sx={{ mt: 1 }}>
-          <FormControlLabel
-            value="new"
-            control={
-              <Radio
-                sx={{
-                  "&.Mui-checked": {
-                    color: "#423BA0",
-                  },
-                }}
-              />
-            }
-            label="It’s all new"
-          />
-          <FormControlLabel
-            value="some"
-            control={
-              <Radio
-                sx={{
-                  "&.Mui-checked": {
-                    color: "#423BA0",
-                  },
-                }}
-              />
-            }
-            label="I know some of it"
-          />
-          <FormControlLabel
-            value="most"
-            control={
-              <Radio
-                sx={{
-                  "&.Mui-checked": {
-                    color: "#423BA0",
-                  },
-                }}
-              />
-            }
-            label="I know most of it"
-          />
-        </RadioGroup>
+          <MenuItem value={5}>5</MenuItem>
+          <MenuItem value={10}>10</MenuItem>
+          <MenuItem value={15}>15</MenuItem>
+          <MenuItem value={20}>20</MenuItem>
+        </Select>
       </FormControl>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
-        <CustomButton
-          variant="outlined"
+      <Typography variant="subtitle1" sx={{ mt: 4, width: "100%" }}>
+        Type of Questions
+      </Typography>
+      <FormControl fullWidth sx={{ mt: 1 }}>
+        <Select
+          multiple
+          value={questionTypes}
+          onChange={handleQuestionTypesChange}
+          renderValue={(selected) => selected.join(", ")}
           sx={{
-            color: "#868dfb",
-            borderColor: "#2C287E",
-            "&:hover": {
-              backgroundColor: "#423BA0",
+            color: "white",
+            bgcolor: colors.primary[400],
+            "& .MuiSelect-icon": {
               color: "white",
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#868dfb",
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#868dfb",
             },
           }}
         >
-          Skip personalization
-        </CustomButton>
+          {questionTypeOptions.map((type) => (
+            <MenuItem
+              key={type}
+              value={type}
+              sx={{ bgcolor: colors.primary[400], color: "white" }}
+            >
+              <Checkbox
+                checked={questionTypes.indexOf(type) > -1}
+                sx={{ color: "white" }} // Color of the checkboxes
+              />
+              <ListItemText primary={type} sx={{ color: "white" }} />
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          width: "100%",
+          mt: 4,
+        }}
+      >
         <CustomButton
           variant="contained"
           sx={{
