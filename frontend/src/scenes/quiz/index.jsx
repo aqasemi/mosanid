@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import {
   Box,
   Typography,
@@ -29,11 +30,21 @@ const CustomButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const PracticeSession = ({ handleClose }) => {
+const PracticeSession = ({ handleClose, SessionData={} }) => {
   const [goal, setGoal] = React.useState("quickly");
+  const [data, setData] = React.useState([]);
+  
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const url = window.location.origin;
+    axios.get(url+'/get_quizzes')
+      .then(response => setData(response.data))
+      .catch(error => {console.log(error)});
+      console.log(data)
+  }, []);
 
   const handleGoalChange = (event, newGoal) => {
     setGoal(newGoal);
@@ -52,8 +63,8 @@ const PracticeSession = ({ handleClose }) => {
         bgcolor: colors.primary[400],
       }}
     ><QHeader
-    title="Chapter 7: "
-    subtitle="Multidimensional Array Practice"
+    title={SessionData.chapter || "Chapter 7: "}
+    subtitle={SessionData.topic || "Multidimensional Array Practice"}
     handleClose={handleClose}
   />
       <Box
